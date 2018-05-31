@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd ../wofdata
+php ../raptor-util/woferclock.php 5 1.1052631578947368421052631578947 WOF_V7_3_3_SFORZA_18_190_2800_TM.csv.original WOF_V7_3_3_SFORZA_18_190_2800_TM.csv

@@ -10,20 +10,24 @@
 	// op-build machine-xml-dirclean machine-xml-rebuild
 	// op-build openpower-pnor-rebuild
 
-	// 22 core
-	// $frequency_offset_percent = 15;
-	$frequency_offset_percent = 10;
+	if ($argc < 2) {
+		printf("USAGE: php woferclock.php <nest bucket ID> <frequency_multiplier> <input file> <output file>\n");
+		exit(1);
+	}
 
-	$input_file = 'WOF_V7_3_3_SFORZA_22_190_2750_TM.csv';
-	$output_file = 'WOF_V7_3_3_SFORZA_22_190_2750_TM.csv';
+	$p9_allowed_bucket_nest_mhz = array(0, 1600, 1866, 2000, 2133, 2400, 2666);
 
-// 	// 18 core
-// 	// $frequency_offset_percent = 15;	// 240W
-// 	$frequency_offset_percent = 10;		// 210W
-// 
-// 	$input_file = 'WOF_V7_3_3_SFORZA_18_190_2800_TM.csv';
-// 	$output_file = 'WOF_V7_3_3_SFORZA_18_190_2800_TM.csv';
+	$nest_bucket_id = $argv[1];
+	$frequency_offset_ratio = $argv[2];
+	$input_file = $argv[3];
+	$output_file = $argv[4];
 
+	if (($nest_bucket_id < 1) || ($nest_bucket_id > 6)) {
+		printf("[ERROR] Invalid nest bucket ID specified\n");
+		exit(1);
+	}
+
+	$nest_mhz = $p9_allowed_bucket_nest_mhz[$nest_bucket_id];
 	$wof_data_in = array();
 	$handle = fopen($input_file, "r");
 	if(empty($handle) === FALSE) {
@@ -34,7 +38,7 @@
 		fclose($handle);
 	}
 	else {
-		printf("[ERROR] Unable to open input file for read!");
+		printf("[ERROR] Unable to open input file for read!\n");
 		exit(0);
 	}
 
@@ -53,10 +57,10 @@
 			$next_wofline = $wofline;
 			$ceff = $next_wofline[14];
 			if ($line_number > 0) {
-				$next_wofline[23] = round($next_wofline[23] + (($next_wofline[23] * $frequency_offset_percent) / 100));
-				if ($next_wofline[23] > $maximum_frequency) {
-					$next_wofline[23] = $maximum_frequency;
-				}
+				$next_wofline[7] = round($next_wofline[7] * $frequency_offset_ratio);
+				$next_wofline[8] = round($next_wofline[8] * $frequency_offset_ratio);
+				$next_wofline[9] = round($nest_mhz);
+				$next_wofline[23] = round($next_wofline[23] * $frequency_offset_ratio);
 			}
 
 			fputcsv($handle, $next_wofline, ",", '"', "\\");
