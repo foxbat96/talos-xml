@@ -6231,7 +6231,7 @@
 	</attribute>
 	<attribute>
 		<id>ASYNC_NEST_FREQ_MHZ</id>
-		<default>1866</default>
+		<default>2400</default>
 	</attribute>
 	<attribute>
 		<id>ATTN_CHK_ALL_PROCS</id>
@@ -6414,7 +6414,7 @@
 	</attribute>
 	<attribute>
 		<id>FREQ_PB_MHZ</id>
-		<default>1866</default>
+		<default>2400</default>
 	</attribute>
 	<attribute>
 		<id>FREQ_PB_MHZ_POUNDV_FALLBACK</id>
