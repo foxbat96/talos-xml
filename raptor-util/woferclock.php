@@ -11,14 +11,14 @@
 	// op-build openpower-pnor-rebuild
 
 	if ($argc < 2) {
-		printf("USAGE: php woferclock.php <nest bucket ID> <frequency_multiplier> <input file> <output file>\n");
+		printf("USAGE: php woferclock.php <nest bucket ID> <frequency_multiplier> <input file base> <output file>\n");
 		exit(1);
 	}
 
 	$p9_allowed_bucket_nest_mhz = array(0, 1600, 1866, 2000, 2133, 2400, 2666);
 
 	$nest_bucket_id = $argv[1];
-	$frequency_offset_ratio = $argv[2];
+	$new_sort_power_target_freq = $argv[2];
 	$input_file = $argv[3];
 	$output_file = $argv[4];
 
@@ -49,6 +49,12 @@
 	// Get maximum frequency
 	$maximum_frequency = $wof_data_in[1][23];
 
+	// Get original sort power target frequency
+	$maximum_frequency = $wof_data_in[1][7];
+
+	$frequency_offset_ratio = $new_sort_power_target_freq / $maximum_frequency;
+	printf("Frequency offset ratio: " . $frequency_offset_ratio . "\n");
+
 	$fsync_counter = 0;
 	$line_number = 0;
 	$handle = fopen($output_file, "w");
@@ -57,7 +63,7 @@
 			$next_wofline = $wofline;
 			$ceff = $next_wofline[14];
 			if ($line_number > 0) {
-				$next_wofline[7] = round($next_wofline[7] * $frequency_offset_ratio);
+				$next_wofline[7] = $new_sort_power_target_freq;
 				$next_wofline[8] = round($next_wofline[8] * $frequency_offset_ratio);
 				$next_wofline[9] = round($nest_mhz);
 				$next_wofline[23] = round($next_wofline[23] * $frequency_offset_ratio);
