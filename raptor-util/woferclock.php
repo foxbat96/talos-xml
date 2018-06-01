@@ -11,16 +11,24 @@
 	// op-build openpower-pnor-rebuild
 
 	if ($argc < 2) {
-		printf("USAGE: php woferclock.php <nest bucket ID> <frequency_multiplier> <input file base> <output file>\n");
+		printf("USAGE: php woferclock.php <nest bucket ID> <new sort power target frequency> <input file base> <output file> [<frequency multiplier> <clip mhz>]\n");
 		exit(1);
 	}
 
 	$p9_allowed_bucket_nest_mhz = array(0, 1600, 1866, 2000, 2133, 2400, 2666);
+	$clip_mhz = -1;
+	$frequency_multiplier = 1.0;
 
 	$nest_bucket_id = $argv[1];
 	$new_sort_power_target_freq = $argv[2];
 	$input_file = $argv[3];
 	$output_file = $argv[4];
+	if ($argc > 5) {
+		$frequency_multiplier = $argv[5];
+	}
+	if ($argc > 6) {
+		$clip_mhz = $argv[6];
+	}
 
 	if (($nest_bucket_id < 1) || ($nest_bucket_id > 6)) {
 		printf("[ERROR] Invalid nest bucket ID specified\n");
@@ -66,7 +74,12 @@
 				$next_wofline[7] = $new_sort_power_target_freq;
 				$next_wofline[8] = round($next_wofline[8] * $frequency_offset_ratio);
 				$next_wofline[9] = round($nest_mhz);
-				$next_wofline[23] = round($next_wofline[23] * $frequency_offset_ratio);
+				$next_wofline[23] = round($next_wofline[23] * $frequency_offset_ratio * $frequency_multiplier);
+				if ($clip_mhz > 0) {
+					if ($next_wofline[23] > $clip_mhz) {
+						$next_wofline[23] = $clip_mhz;
+					}
+				}
 			}
 
 			fputcsv($handle, $next_wofline, ",", '"', "\\");
