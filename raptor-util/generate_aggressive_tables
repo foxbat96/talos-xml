@@ -1,5 +1,6 @@
 #!/bin/bash
 
 cd ../wofdata
+php ../raptor-util/woferclock.php 5 4052 WOF_V7_3_3_SFORZA_8_160_3500_TM.csv.original WOF_V7_3_3_SFORZA_8_160_3500_TM.csv 1.00 4400
 php ../raptor-util/woferclock.php 5 3094 WOF_V7_3_3_SFORZA_18_190_2800_TM.csv.original WOF_V7_3_3_SFORZA_18_190_2800_TM.csv 1.10 4200
 php ../raptor-util/woferclock.php 5 3039 WOF_V7_3_3_SFORZA_22_190_2750_TM.csv.original WOF_V7_3_3_SFORZA_22_190_2750_TM.csv 1.10 4200
